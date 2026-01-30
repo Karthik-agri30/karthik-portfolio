@@ -16,4 +16,21 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  // GitHub Pages deployment configuration
+  // For custom domain (www.karthikportfolio.in), use base: '/'
+  // For username.github.io/repo, use base: '/repo-name/'
+  base: '/',
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+      },
+    },
+  },
+  server: {
+    open: true,
+  },
 })
