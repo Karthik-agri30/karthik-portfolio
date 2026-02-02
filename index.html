@@ -1,26 +1,467 @@
-
-  <!DOCTYPE html>
-<html lang="en">
-  <head>
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Karthik's portfolio - Frontend developer, full-stack engineer, and creative problem solver" />
-    <meta name="keywords" content="portfolio, developer, frontend, react, typescript" />
-    <meta name="author" content="Karthik T" />
-    <meta property="og:title" content="Karthik's Portfolio" />
-    <meta property="og:description" content="Showcase of projects, skills, and experience" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://www.karthikportfolio.in" />
-    <meta name="theme-color" content="#000000" />
     <title>Karthik's Portfolio - Frontend Developer</title>
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="canonical" href="https://www.karthikportfolio.in" />
-  </head>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .bg-gradient-dark {
+            background: linear-gradient(135deg, #111827 0%, #000000 50%, #111827 100%);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111827;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+
+        /* Animation Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-delay-100 { transition-delay: 0.1s; }
+        .reveal-delay-200 { transition-delay: 0.2s; }
+        .reveal-delay-300 { transition-delay: 0.3s; }
+
+        /* Loader */
+        #loader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(139, 92, 246, 0.3);
+            border-top-color: #8b5cf6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Gradient Text */
+        .text-gradient {
+            background: linear-gradient(to right, #c084fc, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Cards 3D effect placeholder */
+        .card-3d:hover {
+            transform: translateY(-5px) scale(1.02);
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 30px -10px rgba(139, 92, 246, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-gradient-dark min-h-screen relative text-gray-100">
+
+    <!-- Loading Screen -->
+    <div id="loader">
+        <div class="text-center">
+            <div class="loader-spinner mx-auto mb-4"></div>
+            <h1 class="text-2xl font-bold text-gradient">Loading...</h1>
+        </div>
+    </div>
+
+    <!-- Particles Canvas -->
+    <canvas id="particles-canvas" class="fixed inset-0 pointer-events-none z-0 opacity-50"></canvas>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="#home" class="text-2xl font-bold text-gradient">Portfolio</a>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#home" class="hover:text-purple-400 transition-colors">Home</a>
+                <a href="#about" class="hover:text-purple-400 transition-colors">About</a>
+                <a href="#projects" class="hover:text-purple-400 transition-colors">Projects</a>
+                <a href="#skills" class="hover:text-purple-400 transition-colors">Skills</a>
+                <a href="#contact" class="hover:text-purple-400 transition-colors">Contact</a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="md:hidden text-white">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+        
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-lg p-6 flex-col gap-4 border-b border-white/10">
+            <a href="#home" class="text-lg hover:text-purple-400">Home</a>
+            <a href="#about" class="text-lg hover:text-purple-400">About</a>
+            <a href="#projects" class="text-lg hover:text-purple-400">Projects</a>
+            <a href="#skills" class="text-lg hover:text-purple-400">Skills</a>
+            <a href="#contact" class="text-lg hover:text-purple-400">Contact</a>
+        </div>
+    </nav>
+
+    <main class="relative z-10 pt-20">
+
+        <!-- Hero Section -->
+        <section id="home" class="min-h-screen flex items-center justify-center px-4 relative">
+            <div class="text-center max-w-5xl mx-auto reveal">
+                <h1 class="text-6xl md:text-8xl font-bold mb-6 text-gradient tracking-tight">
+                    Karthik T
+                </h1>
+                <h2 class="text-2xl md:text-4xl text-gray-300 font-semibold mb-8">
+                    Full Stack Developer & UI/UX Designer
+                </h2>
+                <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-12 leading-relaxed">
+                    Crafting beautiful, performant, and user-centric digital experiences.
+                    Turning complex problems into elegant solutions through code and design.
+                </p>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12">
+                    <div class="p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors group">
+                        <i data-lucide="code-2" class="w-10 h-10 mx-auto mb-4 text-cyan-400 group-hover:scale-110 transition-transform"></i>
+                        <h3 class="font-bold">100+ Projects</h3>
+                    </div>
+                    <div class="p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors group">
+                        <i data-lucide="sparkles" class="w-10 h-10 mx-auto mb-4 text-purple-400 group-hover:scale-110 transition-transform"></i>
+                        <h3 class="font-bold">5 Years Exp.</h3>
+                    </div>
+                    <div class="p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors group">
+                        <i data-lucide="award" class="w-10 h-10 mx-auto mb-4 text-orange-400 group-hover:scale-110 transition-transform"></i>
+                        <h3 class="font-bold">50+ Clients</h3>
+                    </div>
+                    <div class="p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors group">
+                        <i data-lucide="target" class="w-10 h-10 mx-auto mb-4 text-green-400 group-hover:scale-110 transition-transform"></i>
+                        <h3 class="font-bold">99% Success</h3>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Scroll Down Indicator -->
+            <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+                <i data-lucide="chevron-down" class="w-8 h-8 text-gray-500"></i>
+            </div>
+        </section>
+
+        <!-- CTA / About Section -->
+        <section id="about" class="min-h-screen flex items-center justify-center py-20 px-4">
+            <div class="text-center max-w-4xl mx-auto reveal">
+                <h2 class="text-4xl md:text-6xl font-bold mb-8 text-gradient">Ready to Build Something Amazing?</h2>
+                <p class="text-xl text-gray-400 mb-12">Let's collaborate and turn your vision into reality. Get in touch today!</p>
+                <a href="#contact" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-full text-white font-bold text-lg hover:scale-105 transition-transform shadow-lg shadow-purple-500/25">
+                    Hire Me <i data-lucide="arrow-right"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="py-20 px-4">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16 reveal">
+                    <h2 class="text-4xl md:text-6xl font-bold mb-4 text-gradient">Featured Projects</h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto">A selection of my recent work showcasing innovation.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="projects-grid">
+                    <!-- Project Cards (Injected via JS or hardcoded) -->
+                    <!-- Hardcoded for simplicity and reliability -->
+                    <div class="card-3d bg-white/5 border border-white/10 rounded-2xl overflow-hidden reveal">
+                        <div class="h-48 bg-gray-800 relative group overflow-hidden">
+                             <!-- Placeholder Image Gradient -->
+                            <div class="absolute inset-0 bg-gradient-to-br from-purple-900 to-gray-900"></div>
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 gap-4">
+                                <a href="#" class="p-3 bg-purple-600 rounded-full text-white hover:bg-purple-500"><i data-lucide="external-link"></i></a>
+                                <a href="#" class="p-3 bg-gray-700 rounded-full text-white hover:bg-gray-600"><i data-lucide="github"></i></a>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2">E-Commerce Platform</h3>
+                            <p class="text-gray-400 text-sm mb-4">A full-featured shopping platform with payments.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 text-xs bg-purple-500/20 text-purple-300 rounded-full">React</span>
+                                <span class="px-3 py-1 text-xs bg-purple-500/20 text-purple-300 rounded-full">Node.js</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-3d bg-white/5 border border-white/10 rounded-2xl overflow-hidden reveal reveal-delay-100">
+                        <div class="h-48 bg-gray-800 relative group overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-br from-blue-900 to-gray-900"></div>
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 gap-4">
+                                <a href="#" class="p-3 bg-purple-600 rounded-full text-white hover:bg-purple-500"><i data-lucide="external-link"></i></a>
+                                <a href="#" class="p-3 bg-gray-700 rounded-full text-white hover:bg-gray-600"><i data-lucide="github"></i></a>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2">AI Chat Application</h3>
+                            <p class="text-gray-400 text-sm mb-4">Real-time chat with AI integration.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 text-xs bg-purple-500/20 text-purple-300 rounded-full">Next.js</span>
+                                <span class="px-3 py-1 text-xs bg-purple-500/20 text-purple-300 rounded-full">OpenAI</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-3d bg-white/5 border border-white/10 rounded-2xl overflow-hidden reveal reveal-delay-200">
+                        <div class="h-48 bg-gray-800 relative group overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-br from-green-900 to-gray-900"></div>
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 gap-4">
+                                <a href="#" class="p-3 bg-purple-600 rounded-full text-white hover:bg-purple-500"><i data-lucide="external-link"></i></a>
+                                <a href="#" class="p-3 bg-gray-700 rounded-full text-white hover:bg-gray-600"><i data-lucide="github"></i></a>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2">Task Management</h3>
+                            <p class="text-gray-400 text-sm mb-4">Collaborative project management tool.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 text-xs bg-purple-500/20 text-purple-300 rounded-full">Vue</span>
+                                <span class="px-3 py-1 text-xs bg-purple-500/20 text-purple-300 rounded-full">Firebase</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="py-20 px-4 bg-black/20">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-16 reveal">
+                    <h2 class="text-4xl font-bold mb-4 text-gradient">My Skills</h2>
+                    <p class="text-gray-400">Technical expertise and tools</p>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+                     <!-- Skill Items -->
+                    <div class="text-center reveal">
+                        <div class="relative w-24 h-24 mx-auto mb-4 flex items-center justify-center rounded-full border-4 border-cyan-500/30">
+                            <i data-lucide="code-2" class="w-8 h-8 text-cyan-400"></i>
+                            <div class="absolute inset-0 rounded-full border-4 border-cyan-400 border-t-transparent animate-spin-slow"></div>
+                        </div>
+                        <h3 class="font-bold">Frontend</h3>
+                    </div>
+
+                    <div class="text-center reveal reveal-delay-100">
+                        <div class="relative w-24 h-24 mx-auto mb-4 flex items-center justify-center rounded-full border-4 border-purple-500/30">
+                            <i data-lucide="palette" class="w-8 h-8 text-purple-400"></i>
+                            <div class="absolute inset-0 rounded-full border-4 border-purple-400 border-t-transparent animate-spin-slow"></div>
+                        </div>
+                        <h3 class="font-bold">UI/UX</h3>
+                    </div>
+
+                    <div class="text-center reveal reveal-delay-200">
+                        <div class="relative w-24 h-24 mx-auto mb-4 flex items-center justify-center rounded-full border-4 border-green-500/30">
+                            <i data-lucide="database" class="w-8 h-8 text-green-400"></i>
+                            <div class="absolute inset-0 rounded-full border-4 border-green-400 border-t-transparent animate-spin-slow"></div>
+                        </div>
+                        <h3 class="font-bold">Backend</h3>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-20 px-4">
+            <div class="max-w-4xl mx-auto bg-white/5 border border-white/10 rounded-3xl p-8 md:p-12 reveal">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl font-bold mb-4 text-gradient">Get In Touch</h2>
+                    <p class="text-gray-400">Have a project in mind?</p>
+                </div>
+
+                <form class="space-y-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Name</label>
+                            <input type="text" placeholder="John Doe" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-500 transition-colors">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Email</label>
+                            <input type="email" placeholder="john@example.com" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-500 transition-colors">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Message</label>
+                        <textarea rows="4" placeholder="Tell me about your project..." class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-500 transition-colors"></textarea>
+                    </div>
+                    <button class="w-full py-4 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-xl font-bold font-lg hover:opacity-90 transition-opacity">
+                        Send Message
+                    </button>
+                </form>
+
+                 <div class="mt-12 flex flex-col md:flex-row justify-between items-center gap-6 border-t border-white/10 pt-8">
+                     <div class="flex items-center gap-3 text-gray-400">
+                         <i data-lucide="mail" class="w-5 h-5"></i> tkarthik455@gmail.com
+                     </div>
+                     <div class="flex items-center gap-3 text-gray-400">
+                         <i data-lucide="phone" class="w-5 h-5"></i> +91 6385534759
+                     </div>
+                      <div class="flex gap-4">
+                          <a href="#" class="text-gray-400 hover:text-white"><i data-lucide="linkedin"></i></a>
+                          <a href="#" class="text-gray-400 hover:text-white"><i data-lucide="github"></i></a>
+                          <a href="#" class="text-gray-400 hover:text-white"><i data-lucide="instagram"></i></a>
+                      </div>
+                 </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="py-10 text-center text-gray-500 text-sm border-t border-white/5">
+            <p>&copy; 2026 Karthik T. All rights reserved.</p>
+        </footer>
+
+    </main>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // Loader
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loader').style.display = 'none';
+                }, 500);
+            }, 1000);
+        });
+
+        // Mobile Menu
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuBtn.addEventListener('click', () => {
+             mobileMenu.classList.toggle('hidden');
+             mobileMenu.classList.toggle('flex');
+        });
+
+        // Navbar Scroll Effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-black/80', 'backdrop-blur-lg', 'border-b', 'border-white/10');
+            } else {
+                navbar.classList.remove('bg-black/80', 'backdrop-blur-lg', 'border-b', 'border-white/10');
+            }
+        });
+
+        // Scroll Animations (Intersection Observer)
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Particles Background
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2 + 1;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(139, 92, 246, 0.5)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Init Particles
+        for(let i=0; i<50; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+                // Draw connections
+                particles.forEach(p2 => {
+                    const dx = p.x - p2.x;
+                    const dy = p.y - p2.y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    if (dist < 100) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(139, 92, 246, ${0.1 * (1 - dist/100)})`;
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                });
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+    </script>
+</body>
 </html>
-  
