@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { AlertCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { ProjectCard, type Project } from '@/app/components/ProjectCard';
@@ -204,3 +204,4 @@ export function ProjectsSection() {
       </div>
     </section>
   );
+}

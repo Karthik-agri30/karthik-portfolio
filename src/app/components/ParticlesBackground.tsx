@@ -11,7 +11,7 @@ interface Particle {
 export function ParticlesBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
-  const mouseRef = useRef({ x: 0, y: 0 });
+  const mouseRef = useRef<{ x: number | null; y: number | null }>({ x: null, y: null });
   const animationFrameRef = useRef<number>();
 
   useEffect(() => {
@@ -21,34 +21,56 @@ export function ParticlesBackground() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    const initParticles = () => {
+      const particleCount = Math.min(100, Math.floor((canvas.width * canvas.height) / 15000));
+      particlesRef.current = Array.from({ length: particleCount }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        size: Math.random() * 2 + 1,
+      }));
+    };
+
     const resizeCanvas = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      const parent = canvas.parentElement;
+      if (parent) {
+        canvas.width = parent.clientWidth * window.devicePixelRatio;
+        canvas.height = parent.clientHeight * window.devicePixelRatio;
+        canvas.style.width = `${parent.clientWidth}px`;
+        canvas.style.height = `${parent.clientHeight}px`;
+        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      } else {
+        canvas.width = window.innerWidth * window.devicePixelRatio;
+        canvas.height = window.innerHeight * window.devicePixelRatio;
+        canvas.style.width = `${window.innerWidth}px`;
+        canvas.style.height = `${window.innerHeight}px`;
+        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      }
+      initParticles(); // Re-initialize particles on resize to avoid out-of-bounds
     };
 
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // Initialize particles
-    const particleCount = Math.min(150, Math.floor((window.innerWidth * window.innerHeight) / 15000));
-    particlesRef.current = Array.from({ length: particleCount }, () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      vx: (Math.random() - 0.5) * 0.5,
-      vy: (Math.random() - 0.5) * 0.5,
-      size: Math.random() * 2 + 1,
-    }));
-
     const handleMouseMove = (e: MouseEvent) => {
       mouseRef.current = { x: e.clientX, y: e.clientY };
     };
+    
+    const handleMouseLeave = () => {
+      mouseRef.current = { x: null, y: null };
+    };
 
     window.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseleave', handleMouseLeave); /* Handle mouse leaving window */
 
     const animate = () => {
       if (!ctx || !canvas) return;
+      
+      const width = canvas.width / window.devicePixelRatio;
+      const height = canvas.height / window.devicePixelRatio;
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, width, height);
 
       particlesRef.current.forEach((particle, i) => {
         // Update position
@@ -56,23 +78,28 @@ export function ParticlesBackground() {
         particle.y += particle.vy;
 
         // Mouse interaction
-        const dx = mouseRef.current.x - particle.x;
-        const dy = mouseRef.current.y - particle.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (mouseRef.current.x !== null && mouseRef.current.y !== null) {
+            const dx = mouseRef.current.x - particle.x;
+            const dy = mouseRef.current.y - particle.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
 
-        if (distance < 150) {
-          const force = (150 - distance) / 150;
-          particle.vx -= (dx / distance) * force * 0.1;
-          particle.vy -= (dy / distance) * force * 0.1;
+            if (distance < 150) {
+            const force = (150 - distance) / 150;
+            particle.vx -= (dx / distance) * force * 0.1;
+            particle.vy -= (dy / distance) * force * 0.1;
+            }
         }
 
         // Bounce off edges
-        if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -1;
-        if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -1;
+        if (particle.x < 0 || particle.x > width) particle.vx *= -1;
+        if (particle.y < 0 || particle.y > height) particle.vy *= -1;
 
-        // Keep particles in bounds
-        particle.x = Math.max(0, Math.min(canvas.width, particle.x));
-        particle.y = Math.max(0, Math.min(canvas.height, particle.y));
+        // Keep particles in bounds (wrap around or clamp? Bounce logic above handles reversal, but let's clamp safety)
+        if (particle.x < 0) particle.x = 0;
+        if (particle.x > width) particle.x = width;
+        if (particle.y < 0) particle.y = 0;
+        if (particle.y > height) particle.y = height;
+
 
         // Damping
         particle.vx *= 0.99;
@@ -109,6 +136,7 @@ export function ParticlesBackground() {
     return () => {
       window.removeEventListener('resize', resizeCanvas);
       window.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseleave', handleMouseLeave);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
