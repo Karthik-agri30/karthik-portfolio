@@ -51,8 +51,8 @@ export function CTASection() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.8 }}
         >
-          <motion.h2
-            className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6"
+          <motion.div
+            className="text-xl md:text-3xl font-bold mb-8 leading-relaxed"
             animate={{
               backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
             }}
@@ -69,8 +69,8 @@ export function CTASection() {
               backgroundClip: 'text',
             }}
           >
-            Ready to Build Something Amazing?
-          </motion.h2>
+            I am an Agricultural Engineering graduate with interest in integrating technology with agriculture. I have undergone IT training along with my core studies, which helped me understand how digital tools can improve agricultural productivity and management. I completed internship at Aavin Milk Industry where I learned real-time dairy processing, quality testing, and food safety practices. I aim to work in roles that combine agriculture domain knowledge with IT solutions.
+          </motion.div>
 
           <p className="text-xl md:text-2xl text-gray-400 mb-12 max-w-2xl mx-auto">
             Let's collaborate and turn your vision into reality. Get in touch today!
