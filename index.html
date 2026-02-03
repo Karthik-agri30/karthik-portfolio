@@ -139,11 +139,11 @@
 
             <!-- Desktop Menu -->
             <div class="hidden md:flex items-center gap-8">
-                <a href="#home" class="hover:text-purple-400 transition-colors">Home</a>
-                <a href="#about" class="hover:text-purple-400 transition-colors">About</a>
-                <a href="#projects" class="hover:text-purple-400 transition-colors">Projects</a>
-                <a href="#skills" class="hover:text-purple-400 transition-colors">Skills</a>
-                <a href="#contact" class="hover:text-purple-400 transition-colors">Contact</a>
+                <a href="#home" class="text-purple-400 hover:text-purple-400 transition-colors">Home</a>
+                <a href="#about" class="text-gray-300 hover:text-purple-400 transition-colors">About</a>
+                <a href="#projects" class="text-gray-300 hover:text-purple-400 transition-colors">Projects</a>
+                <a href="#skills" class="text-gray-300 hover:text-purple-400 transition-colors">Skills</a>
+                <a href="#contact" class="text-gray-300 hover:text-purple-400 transition-colors">Contact</a>
             </div>
 
             <!-- Mobile Menu Button -->
@@ -155,11 +155,11 @@
         <!-- Mobile Menu Dropdown -->
         <div id="mobile-menu"
             class="hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-lg p-6 flex-col gap-4 border-b border-white/10">
-            <a href="#home" class="text-lg hover:text-purple-400">Home</a>
-            <a href="#about" class="text-lg hover:text-purple-400">About</a>
-            <a href="#projects" class="text-lg hover:text-purple-400">Projects</a>
-            <a href="#skills" class="text-lg hover:text-purple-400">Skills</a>
-            <a href="#contact" class="text-lg hover:text-purple-400">Contact</a>
+            <a href="#home" class="text-lg text-purple-400 hover:text-purple-400">Home</a>
+            <a href="#about" class="text-lg text-gray-300 hover:text-purple-400">About</a>
+            <a href="#projects" class="text-lg text-gray-300 hover:text-purple-400">Projects</a>
+            <a href="#skills" class="text-lg text-gray-300 hover:text-purple-400">Skills</a>
+            <a href="#contact" class="text-lg text-gray-300 hover:text-purple-400">Contact</a>
         </div>
     </nav>
 
@@ -531,6 +531,37 @@
             requestAnimationFrame(animateParticles);
         }
         animateParticles();
+
+        // Active Navigation Highlight
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('#navbar div.hidden a, #mobile-menu a');
+
+        const navObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+
+                    // Remove active style from all links
+                    navLinks.forEach(link => {
+                        link.classList.remove('text-purple-400');
+                        link.classList.add('text-gray-300'); // Default color
+                    });
+
+                    // Add active style to the matching links
+                    const activeLinks = document.querySelectorAll(`nav a[href="#${id}"]`);
+                    activeLinks.forEach(link => {
+                        if (link.parentElement.classList.contains('hidden') || link.parentElement.id === 'mobile-menu') {
+                            link.classList.remove('text-gray-300');
+                            link.classList.add('text-purple-400');
+                        }
+                    });
+                }
+            });
+        }, { threshold: 0.5 }); // Trigger when 50% of the section is visible
+
+        sections.forEach(section => {
+            navObserver.observe(section);
+        });
 
     </script>
 </body>
