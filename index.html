@@ -116,6 +116,19 @@
             transition: transform 0.3s ease;
             box-shadow: 0 10px 30px -10px rgba(139, 92, 246, 0.3);
         }
+
+        /* Selection Glow */
+        ::selection {
+            background: rgba(139, 92, 246, 0.3);
+            color: #ffffff;
+            text-shadow: 0 0 8px #a78bfa, 0 0 12px #22d3ee;
+        }
+
+        ::-moz-selection {
+            background: rgba(139, 92, 246, 0.3);
+            color: #ffffff;
+            text-shadow: 0 0 8px #a78bfa, 0 0 12px #22d3ee;
+        }
     </style>
 </head>
 
@@ -219,11 +232,10 @@
                 <h2 class="text-4xl font-bold mb-8 text-gradient">About Me</h2>
                 <p class="text-xl md:text-2xl font-semibold mb-8 text-white leading-relaxed text-justify">
                     I am an Agricultural Engineering graduate with interest in integrating technology with agriculture.
-                    I have undergone IT training along with my
-                    core studies, which helped me understand how digital tools can improve agricultural productivity and
-                    management. I completed internship at Aavin Milk Industry where I learned real-time dairy
-                    processing, quality testing, and food safety practices. I aim to work in roles that combine
-                    agriculture domain knowledge with IT solutions.
+                    I have undergone IT training along with my core studies, which helped me understand how digital
+                    tools can improve agricultural productivity and management. I completed internship at Aavin Milk
+                    Industry where I learned real-time dairy processing, quality testing, and food safety practices. I
+                    aim to work in roles that combine agriculture domain knowledge with IT solutions.
                 </p>
                 <p class="text-xl text-gray-400 mb-12">Let's collaborate and turn your vision into reality. Get in touch
                     today!</p>
